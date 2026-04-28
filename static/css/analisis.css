@@ -1,0 +1,17 @@
+h1{
+    text-align: center;
+    color:#FFBD00;
+    font-weight: bolder;
+    margin-top:30px;
+    margin-bottom: 30px;
+}
+
+nav{
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+}
+
+.main{
+    margin-left: 20px;
+    margin-right: 20px;
+}
