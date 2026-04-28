@@ -1,6 +1,12 @@
 {% extends "index.html"%}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analisis.css') }}">
+{% endblock %}
+
 
 {% block body%}
-    <h1>Aplication</h1>
-    <p>hola</p>
+    <div class="main">
+        <h1>Aplicacion</h1>
+        <p>hola</p>
+    </div>
 {% endblock %}
