@@ -38,7 +38,7 @@ def analisis():
         return redirect("/analisis")
     else:
         tasks = Todo.query.all()
-        return render_template("index.html", tasks=tasks)
+        return render_template("analisis.html", tasks=tasks)
     
     
 @app.route('/contactanos', methods=['GET','POST'])
