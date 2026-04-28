@@ -1,12 +1,27 @@
 {% extends "index.html"%}
 
+{% block head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/contactanos.css') }}">
+
+{% endblock %}
+
 {% block body%}
 <section id="contacto">
     <div class="clientes-logos">
         <h3>Confían en nuestra tecnología</h3>
         <div class="logo-grid">
-            <img src="logo1.png" alt="Empresa A">
-            <img src="logo2.png" alt="Empresa B">
+            <div class = "logo-item">
+                <img src="https://pbs.twimg.com/media/FLMId-oWYAg2ldC.jpg" alt="Pedido ya">
+            </div>
+            <div class = "logo_item">
+                <img src="https://cdn.dribbble.com/userupload/27193241/file/original-b7aa7440a5ce26ae370b4ba9f2222bf4.jpg" alt="Uber eats">
+            </div>
+            <div class = "logo_item">
+                <img src="https://images.seeklogo.com/logo-png/31/2/rappi-logo-png_seeklogo-312269.png" alt="Rappi">
+            </div>
+            <div class = "logo_item">
+                <img src="https://www.liderlogo.es/wp-content/uploads/2022/12/a8714cadb2358c6a32ce232025eb13fe-768x768.png" alt="Globo">
+            </div>
         </div>
     </div>
 
