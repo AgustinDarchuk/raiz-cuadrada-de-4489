@@ -1,5 +1,40 @@
 {% extends "index.html"%}
 
 {% block body%}
+<section id="contacto">
+    <div class="clientes-logos">
+        <h3>Confían en nuestra tecnología</h3>
+        <div class="logo-grid">
+            <img src="logo1.png" alt="Empresa A">
+            <img src="logo2.png" alt="Empresa B">
+        </div>
+    </div>
 
+    <div class="data-insights">
+        <h2>Análisis del Sector Delivery 2024</h2>
+        <div class="charts-container">
+            <canvas id="graficoEdades"></canvas> <canvas id="graficoSectores"></canvas>
+        </div>
+        <p class="optimizacion-texto">
+            <strong>Referencia:</strong> Logramos una mejora del 22% en la densidad de entregas por hora.
+        </p>
+    </div>
+
+    <div class="contacto-main">
+        <div class="info-texto">
+            <h2>¿Listo para optimizar tu operación?</h2>
+            <p>Déjanos tus datos y un consultor experto en logística te contactará.</p>
+        </div>
+        <form action="/enviar" method="POST">
+            <input type="text" placeholder="Tu nombre" required>
+            <input type="email" placeholder="Correo de empresa" required>
+            <select name="sector">
+                <option value="gastronomia">Gastronomía</option>
+                <option value="retail">Retail / E-commerce</option>
+                <option value="otros">Otros</option>
+            </select>
+            <button type="submit">Solicitar Demo</button>
+        </form>
+    </div>
+</section>
 {% endblock %}
