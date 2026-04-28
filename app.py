@@ -28,5 +28,30 @@ def index():
         tasks = Todo.query.all()
         return render_template("index.html", tasks=tasks)
     
+@app.route('/analisis', methods=['GET','POST'])
+def analisis():
+    if request.method == 'POST':
+        task_content= request.form.get('content')
+        new_todo = Todo(content=task_content)
+        db.session.add(new_todo)
+        db.session.commit()
+        return redirect("/analisis")
+    else:
+        tasks = Todo.query.all()
+        return render_template("index.html", tasks=tasks)
+    
+    
+@app.route('/contactanos', methods=['GET','POST'])
+def contactanos():
+    if request.method == 'POST':
+        task_content= request.form.get('content')
+        new_todo = Todo(content=task_content)
+        db.session.add(new_todo)
+        db.session.commit()
+        return redirect("/contactanos")
+    else:
+        tasks = Todo.query.all()
+        return render_template("contactanos.html", tasks=tasks)
+    
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
