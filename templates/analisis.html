@@ -5,10 +5,26 @@
 
 
 {% block body%}
-    <div class="main">
-        <h1>Aplicacion</h1>
+   <section id="analisis-section">
+    <div class="titulo"> 
+        <h1>Analisando con Jaguar</h1>
         <h4 class="subtitulo">Un poco de nuestro trabajo</h4>
-        <img src="{{ url_for('static', filename='plots/graph.png') }}" alt="grafico de velocidad en relacion al vehiculo">
-
     </div>
+    <div class="main-container">
+        <p class="optimizacion-texto">
+            <strong>Vehiculos:</strong> Análisis basado en la velocidad promedio por rango de distancia y tipo de vehículo.
+        </p>
+        <div class="graph-wrapper">
+            <img src="{{ url_for('static', filename='plots/graph.png') }}" alt="Gráfico de eficiencia">
+        </div>
+
+         <p class="optimizacion-texto">
+            <strong>Análisis del Cuello de Botella (Restaurantes vs. Riders)</strong> A veces las empresas de delivery culpan a los repartidores por las demoras, cuando en realidad el problema es que el restaurante tarda mucho en cocinar.
+        </p>
+        <div class="graph-wrapper">
+            <img src="{{ url_for('static', filename='plots/cuello_botella.png') }}" alt="Gráfico de cuello de botella">
+        </div>
+        <!-- "Descubrimos que en el turno Noche, el 60% de la demora total no es culpa del rider, sino de la cocina. Necesitan optimizar los procesos con los restaurantes en hora pico. A los restaurantes menos optimisados no mostrarlos tanto a los usuarios" -->
+    </div>
+</section>
 {% endblock %}
