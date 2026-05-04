@@ -120,6 +120,75 @@ canvas {
     border-radius: 4px;
     text-align: center;
 }
+/* --- espacio de CARRUSEL--- */
+/* --- ESTILOS EXCLUSIVOS PARA EL CARRUSEL (Bootstrap 5) --- */
+
+#carouselExampleIndicators {
+    max-width: 1000px;
+    margin: 40px auto;
+    border-radius: 24px;
+    overflow: hidden; /* Corta las imágenes para que sigan el borde redondeado */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.carousel-inner {
+    height: 550px; /* Altura fija para que el diseño sea estable */
+    background-color: #111; /* Fondo oscuro mientras cargan las imágenes */
+}
+
+.carousel-item {
+    height: 100%;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;    /* CLAVE: Ajusta la imagen sin estirarla */
+    object-position: center;
+}
+
+/* --- Indicadores (Los puntos de abajo) --- */
+.carousel-indicators [data-bs-target] {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ffcc00; /* El amarillo de Jaguar Home */
+    border: none;
+    margin: 0 6px;
+    opacity: 0.5;
+}
+
+.carousel-indicators .active {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+/* --- Captions (El texto sobre las imágenes) --- */
+.carousel-caption {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px); /* Efecto vidrio esmerilado */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    bottom: 40px;
+}
+
+.carousel-caption h5 {
+    color: #ffcc00;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* --- Responsive: Ajuste para celulares --- */
+@media (max-width: 768px) {
+    .carousel-inner {
+        height: 350px; /* Más bajo en móviles */
+    }
+    .carousel-item img {
+        height: 350px;
+    }
+}
+/* --- fin espacio de CARRUSEL --- */
 
 /* --- 3. Formulario de Contacto --- */
 .contacto-main {
