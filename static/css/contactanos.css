@@ -47,24 +47,6 @@ body {
     flex-wrap: wrap;
 }
 
-.logo-grid img {
-    max-width: 100px;
-    max-height: 80px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-
-
-    filter: grayscale(100%);
-    opacity: 0.6;
-    transition: all 0.3s ease;
-}
-
-.logo-grid img:hover {
-    filter: grayscale(0%);
-    opacity: 1;
-    transform: scale(1.1);
-}
 
 .logo-item {
     width: 120px;  /* El contenedor manda */
@@ -77,7 +59,7 @@ body {
 .logo-item img {
     width: 100%;  /* La imagen nunca se sale del logo-item */
     height: 100%; /* La imagen mantiene su proporción */
-    object-fit: cover;
+    object-fit: contain; /*"contain" adapta la imagen al tamaño disponible*/
     filter: grayscale(100%);
     opacity: 0.6;
     transition: all 0.3s ease;
@@ -89,106 +71,167 @@ body {
     transform: scale(1.1);
     cursor: pointer;
 }
+/* parte de carrusel*/
 
-
-/* --- 2. Data Insights y Gráficos --- */
-.data-insights {
-    background: var(--white);
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    margin-bottom: 60px;
+/* --- Estilo Principal del Carrusel --- */
+#carouselExampleControls {
+    max-width: 1000px;
+    margin: 40px auto;
+    border-radius: 25px; /* Bordes bien redondeados */
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); /* Sombra suave */
 }
 
-.data-insights h2 {
-    text-align: center;
-    margin-bottom: 40px;
+.carousel-inner {
+    height: 500px; /* Altura controlada */
+    background-color: #111; /* Fondo para evitar destellos blancos */
 }
 
-.charts-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-bottom: 30px;
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Evita que el iPhone o el logo se deformen */
+    object-position: center;
 }
 
-/* Espacio para los canvas de Chart.js */
-canvas {
-    width: 100% !important;
-    max-height: 300px;
+/* --- Personalización de Flechas --- */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(255, 204, 0, 0.8); /* Amarillo Jaguar con transparencia */
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0 20px;
+    opacity: 0; /* Ocultas por defecto */
+    transition: all 0.3s ease;
 }
 
-.optimizacion-texto {
-    background: #ecfdf5;
-    border-left: 5px solid #10b981;
-    padding: 15px;
-    border-radius: 4px;
-    text-align: center;
+/* Aparecen al pasar el mouse por el carrusel */
+#carouselExampleControls:hover .carousel-control-prev,
+#carouselExampleControls:hover .carousel-control-next {
+    opacity: 1;
+}
+/* --- espacio de CARRUSEL--- */
+/* --- ESTILOS EXCLUSIVOS PARA EL CARRUSEL (Bootstrap 5) --- */
+
+#carouselExampleIndicators {
+    max-width: 1000px;
+    margin: 40px auto;
+    border-radius: 24px;
+    overflow: hidden; /* Corta las imágenes para que sigan el borde redondeado */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-/* --- 3. Formulario de Contacto --- */
-.contacto-main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 50px;
-    align-items: center;
+.carousel-inner {
+    height: 550px; /* Altura fija para que el diseño sea estable */
+    background-color: #111; /* Fondo oscuro mientras cargan las imágenes */
 }
 
-.info-texto h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: var(--primary-color);
+.carousel-item {
+    height: 100%;
 }
 
-form {
-    background: var(--white);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;    /* CLAVE: Ajusta la imagen sin estirarla */
+    object-position: center;
 }
 
-form input, form select {
-    padding: 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-form input:focus, form select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-button[type="submit"] {
-    background-color: var(--primary-color);
-    color: var(--white);
-    padding: 15px;
+/* --- Indicadores (Los puntos de abajo) --- */
+.carousel-indicators [data-bs-target] {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ffcc00; /* El amarillo de Jaguar Home */
     border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
+    margin: 0 6px;
+    opacity: 0.5;
 }
 
-button[type="submit"]:hover {
-    background-color: #1d4ed8;
+.carousel-indicators .active {
+    opacity: 1;
+    transform: scale(1.2);
 }
 
-/* --- Responsive --- */
+/* --- Captions (El texto sobre las imágenes) --- */
+.carousel-caption {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px); /* Efecto vidrio esmerilado */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    bottom: 40px;
+}
+
+.carousel-caption h5 {
+    color: #ffcc00;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* --- Responsive: Ajuste para celulares --- */
 @media (max-width: 768px) {
-    .contacto-main {
-        grid-template-columns: 1fr;
+    .carousel-inner {
+        height: 350px; /* Más bajo en móviles */
     }
-    
-    .info-texto {
-        text-align: center;
+    .carousel-item img {
+        height: 350px;
     }
 }
+/* --- fin espacio de CARRUSEL --- */
 
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(1) grayscale(100%) brightness(0); /* Forzamos flechas negras sobre el amarillo */
+    width: 20px;
+    height: 20px;
+}
+
+/*fin parte carrusel*/
+/*parte logo frase*/
+
+/* --- Sección de Confianza Premium --- */
+.trust-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px; /* Espacio entre los dos divs */
+    background: var(--white);
+    padding: 60px 40px;
+    border-radius: 20px;
+    margin: 40px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.logo-side img {
+    width: 250px; /* Acá controlás el tamaño del logo */
+    height: auto;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    transition: transform 0.3s ease;
+}
+
+.logo-side img:hover {
+    transform: scale(1.05); /* Un poquito de vida al pasar el mouse */
+}
+
+.text-side h2 {
+    font-size: 3rem; /* Frase grande y clara */
+    font-weight: 900;
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1;
+}
+
+.text-side .highlight {
+    color: var(--accent-color); /* El amarillo/naranja de tu marca */
+}
+
+
+
+/* fin parte logo frase*/
 /* --- Estilo del Formulario de Solicitud --- */
 
 .contacto-main {
