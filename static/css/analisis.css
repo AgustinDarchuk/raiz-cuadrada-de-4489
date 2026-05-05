@@ -6,6 +6,10 @@
     --white: #ffffff;
 }
 
+.navbar {
+    background-color: #0A0A0A !important;
+    position: relative !important; /* Para que no flote sobre el contenido en estas páginas */
+}
 
 body {
     background-color: var(--bg-light);
@@ -18,7 +22,9 @@ body {
     padding: 20px;
 }
 
-
+.white-space-bottom{
+    margin-bottom: 20px;
+}
 
 .main-container {
     background: var(--white);

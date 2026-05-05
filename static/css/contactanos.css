@@ -20,6 +20,11 @@ body {
     padding: 20px;
 }
 
+.white-space{
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
 /* --- 1. Logos de Clientes (Social Proof) --- */
 .clientes-logos {
     text-align: center;
