@@ -4,7 +4,7 @@ from datetime import datetime
 import matplotlib #crear los graficos
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import pandas 
+import pandas as pd
 import os
 
 app = Flask(__name__)
@@ -57,13 +57,13 @@ def contactanos():
     
 def generate_simple_pro_chart():
     # 1. Carga y preparación (igual que antes)
-    data = pandas.read_csv("data/Food_Delivery_Times.csv")
+    data = pd.read_csv("data/Food_Delivery_Times.csv")
     vehicles = ["Car", "Scooter", "Bike"]
     data = data[data["Vehicle_Type"].isin(vehicles)]
     
     bins = [0, 3, 7, 20]
     labels = ['Corta (0-3km)', 'Media (3-7km)', 'Larga (+7km)']
-    data['Distancia_Cat'] = pandas.cut(data['Distance_km'], bins=bins, labels=labels)
+    data['Distancia_Cat'] = pd.cut(data['Distance_km'], bins=bins, labels=labels)
     
     pivot_data = data.pivot_table(index='Distancia_Cat', columns='Vehicle_Type', values='Delivery_Time_min', aggfunc='mean')
     
@@ -112,76 +112,102 @@ def generate_simple_pro_chart():
     
     return "Gráfico simple generado"
 
-def generate_bottleneck_chart():
-    # 1. Carga de datos
-    data = pandas.read_csv("data/Food_Delivery_Times.csv")
+def generate_weather_impact_chart():
+    data = pd.read_csv("data/Food_Delivery_Times.csv")
     
-    # 2. Preparación de datos y mapeo al español
-    # Los CSV suelen tener estos valores en inglés. Los pasamos a español para el gráfico.
-    mapeo_turnos = {
-        'Morning': 'Mañana',
-        'Afternoon': 'Tarde',
-        'Evening': 'Noche',
-        'Night': 'Madrugada'
+    # Mapeo a español
+    traduccion_clima = {
+        'Clear': 'Despejado', 'Rainy': 'Lluvia', 'Snowy': 'Nieve', 
+        'Foggy': 'Niebla', 'Windy': 'Viento'
     }
-    data['Turno'] = data['Time_of_Day'].map(mapeo_turnos).fillna(data['Time_of_Day'])
+    data['Clima'] = data['Weather'].map(traduccion_clima)
     
-    # Agrupamos por turno y calculamos el promedio de ambos tiempos
-    pivot_data = data.groupby('Turno')[['Preparation_Time_min', 'Delivery_Time_min']].mean()
-    
-    # Reordenamos para que tenga sentido cronológico
-    orden_turnos = ['Mañana', 'Tarde', 'Noche', 'Madrugada']
-    turnos_existentes = [t for t in orden_turnos if t in pivot_data.index]
-    pivot_data = pivot_data.reindex(turnos_existentes)
-    
-    # Renombramos las columnas para que la leyenda quede perfecta
-    pivot_data = pivot_data.rename(columns={
-        'Preparation_Time_min': 'Preparación (Restaurante)',
-        'Delivery_Time_min': 'Viaje (Repartidor)'
-    })
-    
-    # 3. Gráfico Estilo Minimalista (Apilado)
+    clima_stats = data.groupby('Clima')['Delivery_Time_min'].mean().sort_values()
+
     plt.figure(figsize=(10, 6))
-    ax = plt.gca()
-
-    # Colores: Naranja Jaguar para el restaurante, Azul Marino para el repartidor
-    colores = ['#FFBD00', '#2c3e50'] 
-
-    # stacked=True es la magia que apila las barras
-    pivot_data.plot(kind='bar', stacked=True, ax=ax, color=colores, width=0.6, edgecolor='white', linewidth=1)
-
-    # 4. Limpieza Total
-    plt.title("Cuello de Botella: Restaurante vs. Repartidor", fontsize=14, fontweight='bold', pad=20)
-    plt.ylabel("Minutos (Promedio)", fontsize=10)
-    plt.xlabel("") # Eje X limpio
+    colores = ['#bdc3c7', '#bdc3c7', '#bdc3c7', '#bdc3c7', '#e67e22'] 
     
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
+    clima_stats.plot(kind='barh', color=colores, width=0.7)
     
-    plt.xticks(rotation=0)
-    plt.grid(axis='y', linestyle='--', alpha=0.3)
+    plt.title("Impacto del Clima en el Tiempo de Entrega", fontsize=14, fontweight='bold')
+    plt.xlabel("Minutos Promedio")
+    plt.ylabel("")
+    plt.grid(axis='x', linestyle='--', alpha=0.3)
     
-    # Leyenda arriba, sin recuadro
-    plt.legend(title="", frameon=False, loc='upper left', ncol=2)
-
-    # 5. Etiquetas de datos dentro de los bloques
-    for container in ax.containers:
-        # label_type='center' ubica el número justo en el medio de cada color
-        ax.bar_label(container, fmt='%.1f', label_type='center', color='white', fontweight='bold', fontsize=10)
+    for i, v in enumerate(clima_stats):
+        plt.text(v + 1, i, f"{v:.1f} min", va='center', fontweight='bold')
 
     plt.tight_layout()
 
-    # 6. Guardado
+    # --- LO QUE FALTABA ---
     if not os.path.exists("static/plots"):
         os.makedirs("static/plots")
-    
-    # Lo guardamos con un nombre nuevo para que puedas tener ambos gráficos si querés
-    plt.savefig("static/plots/cuello_botella.png") 
+        
+    plt.savefig("static/plots/impacto_clima.png")
     plt.close()
     
-    return "Gráfico de Cuello de Botella generado"
+    return "Gráfico de clima generado"
     
+def generate_traffic_impact_chart():
+    # 1. Verificación de ruta segura
+    ruta_csv = "data/Food_Delivery_Times.csv"
+    if not os.path.exists(ruta_csv):
+        print(f"Error: No se encontró el archivo en {ruta_csv}")
+        return
+
+    data = pd.read_csv(ruta_csv)
+    
+    # 2. Mapeo a español
+    traduccion_trafico = {
+        'Low': 'Bajo', 
+        'Medium': 'Medio', 
+        'High': 'Alto'
+    }
+    data['Tráfico'] = data['Traffic_Level'].map(traduccion_trafico)
+    
+    # 3. Agrupar y calcular promedio
+    trafico_stats = data.groupby('Tráfico')['Delivery_Time_min'].mean()
+    
+    # Ordenar lógicamente de menor a mayor tráfico
+    orden = ['Bajo', 'Medio', 'Alto']
+    trafico_stats = trafico_stats.reindex(orden)
+
+    # 4. Configuración del gráfico
+    plt.figure(figsize=(8, 6))
+    ax = plt.gca()
+    
+    # Colores: Gris para Bajo/Medio, Naranja Jaguar para el crítico (Alto)
+    colores = ['#bdc3c7', '#bdc3c7', '#FFBD00'] 
+    
+    trafico_stats.plot(kind='bar', ax=ax, color=colores, width=0.6, edgecolor='white')
+    
+    plt.title("Impacto del Tráfico en Tiempos de Entrega", fontsize=14, fontweight='bold', pad=20)
+    plt.ylabel("Minutos (Promedio)", fontsize=10)
+    plt.xlabel("") # Eje X limpio
+    
+    # 5. Limpieza visual
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    plt.xticks(rotation=0, fontsize=11, fontweight='bold')
+    plt.grid(axis='y', linestyle='--', alpha=0.3)
+    
+    # Etiquetas de datos sobre las barras
+    for container in ax.containers:
+        ax.bar_label(container, fmt='%.1f', padding=5, fontweight='bold', fontsize=10)
+
+    plt.tight_layout()
+
+    # 6. Guardado seguro
+    target_dir = "static/plots"
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+        
+    plt.savefig(os.path.join(target_dir, "impacto_trafico.png"))
+    plt.close()
+    print("Gráfico 'impacto_trafico.png' guardado con éxito.")
+
 if __name__ == '__main__':
     generate_simple_pro_chart()
-    generate_bottleneck_chart()
+    generate_weather_impact_chart()
+    generate_traffic_impact_chart()
     app.run(debug=True, port=5001)

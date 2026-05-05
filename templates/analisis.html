@@ -11,20 +11,27 @@
         <h4 class="subtitulo">Un poco de nuestro trabajo</h4>
     </div>
     <div class="main-container">
+        
         <p class="optimizacion-texto">
             <strong>Vehiculos:</strong> Análisis basado en la velocidad promedio por rango de distancia y tipo de vehículo.
         </p>
         <div class="graph-wrapper">
             <img src="{{ url_for('static', filename='plots/graph.png') }}" alt="Gráfico de eficiencia">
         </div>
-
-         <p class="optimizacion-texto">
-            <strong>Análisis del Cuello de Botella (Restaurantes vs. Riders)</strong> A veces las empresas de delivery culpan a los repartidores por las demoras, cuando en realidad el problema es que el restaurante tarda mucho en cocinar.
+        
+        <p class="optimizacion-texto">
+            <strong>Tiempos de espera segun el clima:</strong> Ayuda a las empresas a predecir retrasos y ajustar automáticamente las expectativas del usuario final en la app.
         </p>
         <div class="graph-wrapper">
-            <img src="{{ url_for('static', filename='plots/cuello_botella.png') }}" alt="Gráfico de cuello de botella">
+            <img src="{{ url_for('static', filename='plots/impacto_clima.png') }}" alt="Gráfico de impacto en las entregas segun el clima">
         </div>
-        <!-- "Descubrimos que en el turno Noche, el 60% de la demora total no es culpa del rider, sino de la cocina. Necesitan optimizar los procesos con los restaurantes en hora pico. A los restaurantes menos optimisados no mostrarlos tanto a los usuarios" -->
+        
+        <p class="optimizacion-texto">
+            <strong>Trafico optimisado:</strong> El tráfico alto incrementa el tiempo de entrega en casi un 25%. Esto justifica la activación automática de <em>Tarifas Dinámicas</em> y el despacho prioritario de flota ligera (motos/bicis) durante horas pico.
+        </p>
+        <div class="graph-wrapper">
+            <img src="{{ url_for('static', filename='plots/impacto_trafico.png') }}" alt="Gráfico de impacto en las entregas segun el clima">
+        </div>
     </div>
 </section>
 {% endblock %}
