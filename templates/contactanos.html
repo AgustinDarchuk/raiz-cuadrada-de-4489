@@ -13,27 +13,54 @@
             <div class = "logo-item">
                 <img src="https://pbs.twimg.com/media/FLMId-oWYAg2ldC.jpg" alt="Pedido ya">
             </div>
-            <div class = "logo_item">
+            <div class = "logo-item">
                 <img src="https://cdn.dribbble.com/userupload/27193241/file/original-b7aa7440a5ce26ae370b4ba9f2222bf4.jpg" alt="Uber eats">
             </div>
-            <div class = "logo_item">
+            <div class = "logo-item">
                 <img src="https://images.seeklogo.com/logo-png/31/2/rappi-logo-png_seeklogo-312269.png" alt="Rappi">
             </div>
-            <div class = "logo_item">
+            <div class = "logo-item">
                 <img src="https://www.liderlogo.es/wp-content/uploads/2022/12/a8714cadb2358c6a32ce232025eb13fe-768x768.png" alt="Globo">
             </div>
         </div>
     </div>
 
-    <div class="data-insights">
-        <h2>Análisis del Sector Delivery 2024</h2>
-        <div class="charts-container">
-            <canvas id="graficoEdades"></canvas> <canvas id="graficoSectores"></canvas>
+    <!-- carrusel -->
+    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="../static/plots/celu_mano.png" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="../static/plots/graph.png" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="../static/plots/logoentero.png" class="d-block w-100" alt="...">
+            </div>
         </div>
-        <p class="optimizacion-texto">
-            <strong>Referencia:</strong> Logramos una mejora del 22% en la densidad de entregas por hora.
-        </p>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
+    <!-- fin Carrusel-->
+
+    <!--logo + frase-->
+    <div class="trust-section">
+        <div class="trust-column logo-side">
+            <!-- El logo ahora tiene su propio espacio -->
+            <img src="../static/plots/logoentero.png" alt="Jaguar Home Logo">
+        </div>
+        <div class="trust-column text-side">
+            <!-- La frase con peso visual -->
+            <h2>Confía en <span class="highlight">Jaguar</span></h2>
+        </div>
+    </div>
+    <!--fin logo + frase-->
 
     <div class="contacto-main">
         <div class="info-texto">
