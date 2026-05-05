@@ -6,6 +6,13 @@
     --white: #ffffff;
 }
 
+/*apartado de navbar*/
+.navbar {
+    background-color: #0A0A0A !important; /* Tu color --negro */
+    position: relative !important; /* Para que no flote sobre el contenido en estas páginas */
+}
+/*fin apartado navbar*/
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
