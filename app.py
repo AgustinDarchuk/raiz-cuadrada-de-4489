@@ -41,6 +41,18 @@ def analisis():
         tasks = Todo.query.all()
         return render_template("analisis.html", tasks=tasks)
     
+@app.route('/simulacion', methods=['GET','POST'])
+def simulacion():
+    if request.method == 'POST':
+        task_content= request.form.get('content')
+        new_todo = Todo(content=task_content)
+        db.session.add(new_todo)
+        db.session.commit()
+        return redirect("/simulacion")
+    else:
+        tasks = Todo.query.all()
+        return render_template("simulacion.html", tasks=tasks)
+    
     
 @app.route('/contactanos', methods=['GET','POST'])
 def contactanos():
