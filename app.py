@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,redirect
+from flask import Flask, render_template, request, redirect , url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import matplotlib #crear los graficos
@@ -6,17 +6,27 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+import random
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
+#MODELOS DE LA BASE DE DATOS
 class Todo(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     content = db.Column(db.String(200),nullable=False)
     completed = db.Column(db.Boolean, default=False)
     date_created = db.Column(db.DateTime, default=datetime.now())
+#modifica Jhon tabla modelo
+class Contacto(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    sector = db.Column(db.String(50), nullable=False)
+#modifica Jhon fin tabla modelo
 
+#RUTAS DE LA APLICACION
 @app.route('/', methods=['GET','POST'])
 def index():
     if request.method == 'POST':
@@ -54,8 +64,58 @@ def simulacion():
         return render_template("simulacion.html", tasks=tasks)
     
     
+#
+@app.route('/generar-leads-ficticios')
+def generar_leads():
+    nombres = ["Carlos", "Martina", "Lucas", "Sofia", "Juan", "Valentina", "Mateo", "Camila", "Diego", "Elena"]
+    apellidos = ["Gomez", "Rodriguez", "Fernandez", "Lopez", "Diaz", "Perez", "Romero", "Alvarez", "Torres", "Ruiz"]
+    sectores = ["Gastronomía", "Retail / E-commerce", "Otros"]
+    dominios = ["gmail.com", "outlook.com", "empresa.com", "delivery.co"]
+
+    # Limpia datos previos para no acumular infinitamente al recargar
+    Contacto.query.delete()
+
+    for _ in range(40):
+        nom = random.choice(nombres)
+        ape = random.choice(apellidos)
+        nombre_completo = f"{nom} {ape}"
+        email = f"{nom.lower()}.{ape.lower()}@{random.choice(dominios)}"
+        sector = random.choice(sectores)
+
+        nuevo_lead = Contacto(nombre=nombre_completo, email=email, sector=sector)
+        db.session.add(nuevo_lead)
+        
+    db.session.commit()
+    return "¡Se han generado 40 formularios de contacto ficticios en la base de datos!"
+#
 @app.route('/contactanos', methods=['GET','POST'])
 def contactanos():
+    mensajes = Contacto.query.all()
+    
+    total_solicitudes = len(mensajes)
+    sector_lider = "Ninguno"
+    porcentaje_gastronomia = 0
+
+    if total_solicitudes > 0:
+        # Procesamos las métricas comerciales usando Pandas
+        data = [{'sector': m.sector} for m in mensajes]
+        df = pd.DataFrame(data)
+        
+        conteo_sectores = df['sector'].value_counts()
+        sector_lider = conteo_sectores.idxmax()
+        
+        if "Gastronomía" in conteo_sectores:
+            total_gastro = conteo_sectores["Gastronomía"]
+            porcentaje_gastronomia = round((total_gastro / total_solicitudes) * 100, 1)
+
+    stats_comerciales = {
+        'total': total_solicitudes,
+        'lider': sector_lider,
+        'pct_gastro': porcentaje_gastronomia
+    }
+
+    return render_template("contactanos.html", mensajes=mensajes, stats_biz=stats_comerciales)
+    '''
     if request.method == 'POST':
         task_content= request.form.get('content')
         new_todo = Todo(content=task_content)
@@ -65,8 +125,20 @@ def contactanos():
     else:
         tasks = Todo.query.all()
         return render_template("contactanos.html", tasks=tasks)
+    '''
+@app.route('/enviar', methods=['POST'])
+def enviar():
+    nombre_user = request.form.get('nombre')
+    email_user = request.form.get('email')
+    sector_user = request.form.get('sector')
     
-    
+    if nombre_user and email_user:
+        nuevo_contacto = Contacto(nombre=nombre_user, email=email_user, sector=sector_user)
+        db.session.add(nuevo_contacto)
+        db.session.commit()
+        
+    return redirect(url_for('contactanos'))
+
 def generate_simple_pro_chart():
     # 1. Carga y preparación (igual que antes)
     data = pd.read_csv("data/Food_Delivery_Times.csv")
@@ -219,7 +291,12 @@ def generate_traffic_impact_chart():
     print("Gráfico 'impacto_trafico.png' guardado con éxito.")
 
 if __name__ == '__main__':
+    #crea la base de datos y las tablas
+    with app.app_context():
+        db.create_all()
+    #despues genera los graficos
     generate_simple_pro_chart()
     generate_weather_impact_chart()
     generate_traffic_impact_chart()
+    #enciende el sercidor local
     app.run(debug=True, port=5001)

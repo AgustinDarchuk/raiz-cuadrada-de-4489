@@ -95,8 +95,8 @@
             <p>Déjanos tus datos y un consultor experto en logística te contactará.</p>
         </div>
         <form action="/enviar" method="POST">
-            <input type="text" placeholder="Tu nombre" required>
-            <input type="email" placeholder="Correo de empresa" required>
+            <input type="text" name="nombre" placeholder="Tu nombre" required>
+            <input type="email" name="email" placeholder="Correo de empresa" required>
             <select name="sector">
                 <option value="gastronomia">Gastronomía</option>
                 <option value="retail">Retail / E-commerce</option>
@@ -106,4 +106,31 @@
         </form>
     </div>
 </section>
+
+<!--TABLA DE FORMULARIOS-->
+<div class="container mt-5 mb-5 p-4" style="background: white; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05);">
+    <h3 class="mb-3 text-dark font-weight-bold">Demos Solicitadas (Simulación DB)</h3>
+    <table class="table table-striped border">
+        <thead class="table-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Email de Empresa</th>
+                <th>Sector</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mensaje in mensajes %}
+            <tr>
+                <td>{{ mensaje.nombre }}</td>
+                <td>{{ mensaje.email }}</td>
+                <td>{{ mensaje.sector }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" class="text-center text-muted">No hay solicitudes registradas todavía. ¡Sé el primero!</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
