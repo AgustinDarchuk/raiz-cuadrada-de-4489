@@ -51,17 +51,96 @@ def analisis():
         tasks = Todo.query.all()
         return render_template("analisis.html", tasks=tasks)
     
-@app.route('/simulacion', methods=['GET','POST'])
+@app.route('/simulacion', methods=['GET', 'POST'])
 def simulacion():
     if request.method == 'POST':
-        task_content= request.form.get('content')
-        new_todo = Todo(content=task_content)
-        db.session.add(new_todo)
-        db.session.commit()
-        return redirect("/simulacion")
-    else:
-        tasks = Todo.query.all()
-        return render_template("simulacion.html", tasks=tasks)
+        # 1. Captura de datos
+        riders = int(request.form.get('riders', 10))
+        pedidos = int(request.form.get('pedidos', 100))
+        ticket = float(request.form.get('ticket_promedio', 1000))
+        factor = request.form.get('factor_critico', 'High_Traffic')
+
+        # 2. Límites de capacidad física por repartidor al día
+        CAPACIDAD_SIN_JAGUAR = 6   # Pedidos máximos que hace un rider al día sin optimizar
+        CAPACIDAD_CON_JAGUAR = 10  # Pedidos máximos que hace un rider gracias a Jaguar
+
+        max_pedidos_sin = riders * CAPACIDAD_SIN_JAGUAR
+        max_pedidos_con = riders * CAPACIDAD_CON_JAGUAR
+
+        # ¿Hay escasez de repartidores para cubrir la demanda actual?
+        escasez_sin = pedidos > max_pedidos_sin
+        pedidos_perdidos_diarios = max(0, pedidos - max_pedidos_sin)
+
+        # Penalización por clima/tráfico (sigue aplicando a los pedidos que SÍ se pueden procesar)
+        penalty = 0.22 if factor == 'High_Traffic' else 0.28
+        
+        # 3. Simulación a 30 días con fluctuación y topes de capacidad
+        random.seed(42)
+        acum_sin = []
+        acum_con = []
+        total_sin = 0
+        total_con = 0
+        days = list(range(1, 31))
+
+        for day in days:
+            # Los pedidos del mercado fluctúan +/- 15% día a día
+            fluctuacion = random.uniform(0.85, 1.15)
+            pedidos_del_dia = pedidos * fluctuacion
+            
+            # El tope de la flota limita cuántos pedidos se pueden procesar en el día realmente
+            pedidos_reales_sin = min(pedidos_del_dia, max_pedidos_sin)
+            pedidos_reales_con = min(pedidos_del_dia, max_pedidos_con)
+            
+            # Cálculo de facturación diaria aplicando la ineficiencia
+            dia_sin = (pedidos_reales_sin * ticket * (1 - penalty))
+            dia_con = (pedidos_reales_con * ticket)
+            
+            total_sin += dia_sin
+            total_con += dia_con
+            
+            acum_sin.append(total_sin)
+            acum_con.append(total_con)
+
+        # Cálculo de métricas finales para la pantalla
+        extra_mensual = total_con - total_sin
+        # La eficiencia total combina la velocidad y la capacidad de absorber pedidos retenidos
+        eficiencia_aumento = int(((total_con - total_sin) / max(1, total_sin)) * 100)
+
+        # 4. Gráfico Matplotlib
+        plt.figure(figsize=(10, 5))
+        ax = plt.gca()
+
+        plt.plot(days, acum_con, label='Con Jaguar Home (Optimizado)', color='#FFBD00', linewidth=3)
+        plt.plot(days, acum_sin, label='Escenario Actual (Inadecuado)', color='#bdc3c7', linewidth=2, linestyle='--')
+        plt.fill_between(days, acum_sin, acum_con, color='#FFBD00', alpha=0.1)
+        
+        plt.title("Proyección de Ingresos Netos Acumulados (30 días)", fontsize=13, fontweight='bold', pad=15)
+        plt.xlabel("Días del Mes", fontsize=10)
+        plt.ylabel("Facturación ($)", fontsize=10)
+        
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        plt.grid(True, linestyle=':', alpha=0.5)
+        plt.legend(frameon=False, loc='upper left', fontsize=10)
+        ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+
+        target_dir = "static/plots"
+        if not os.path.exists(target_dir):
+            os.makedirs(target_dir)
+            
+        plt.savefig(os.path.join(target_dir, "prediccion_ingresos.png"))
+        plt.close()
+
+        extra_mensual_formateado = f"${extra_mensual:,.0f}".replace(",", ".")
+
+        return render_template('simulacion.html', 
+                               resultado=True, 
+                               extra_mensual=extra_mensual_formateado, 
+                               eficiencia=eficiencia_aumento,
+                               riders=riders, pedidos=pedidos, ticket=ticket, factor=factor,
+                               escasez=escasez_sin, perdidos=int(pedidos_perdidos_diarios))
+    
+    return render_template('simulacion.html', resultado=False)
     
     
 #
@@ -72,7 +151,7 @@ def generar_leads():
     sectores = ["Gastronomía", "Retail / E-commerce", "Otros"]
     dominios = ["gmail.com", "outlook.com", "empresa.com", "delivery.co"]
 
-    # Limpia datos previos para no acumular infinitamente al recargar
+    
     Contacto.query.delete()
 
     for _ in range(40):
@@ -97,7 +176,6 @@ def contactanos():
     porcentaje_gastronomia = 0
 
     if total_solicitudes > 0:
-        # Procesamos las métricas comerciales usando Pandas
         data = [{'sector': m.sector} for m in mensajes]
         df = pd.DataFrame(data)
         
@@ -140,7 +218,6 @@ def enviar():
     return redirect(url_for('contactanos'))
 
 def generate_simple_pro_chart():
-    # 1. Carga y preparación (igual que antes)
     data = pd.read_csv("data/Food_Delivery_Times.csv")
     vehicles = ["Car", "Scooter", "Bike"]
     data = data[data["Vehicle_Type"].isin(vehicles)]
@@ -157,38 +234,35 @@ def generate_simple_pro_chart():
         'Bike': 'Bicicleta'
     })
     
-    # 2. Gráfico Estilo Minimalista
     plt.figure(figsize=(10, 6))
     ax = plt.gca()
 
-    # Colores sólidos y modernos
-    # Azul Marino (Car), Naranja (Scooter), Gris (Bike)
     colores = ['#2c3e50', '#e67e22', '#bdc3c7'] 
 
     pivot_data.plot(kind='bar', ax=ax, color=colores, width=0.8, edgecolor='white', linewidth=1)
 
-    # 3. Limpieza Total
+    
     plt.title("Tiempos de Entrega por Distancia", fontsize=14, fontweight='bold', pad=20)
     plt.ylabel("Minutos (Promedio)", fontsize=10)
-    plt.xlabel("") # Quitamos el título del eje X para que sea más limpio
+    plt.xlabel("") 
     
-    # Quitar bordes innecesarios
+
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     
     plt.xticks(rotation=0)
     plt.grid(axis='y', linestyle='--', alpha=0.3)
     
-    # Leyenda simple arriba
+
     plt.legend(title="", frameon=False, loc='upper left', ncol=3)
 
-    # Etiquetas de datos simples sobre las barras
+    
     for container in ax.containers:
         ax.bar_label(container, fmt='%.1f', padding=3, fontsize=9)
 
     plt.tight_layout()
 
-    # 4. Guardado
+    
     if not os.path.exists("static/plots"):
         os.makedirs("static/plots")
     plt.savefig("static/plots/graph.png")
@@ -199,7 +273,7 @@ def generate_simple_pro_chart():
 def generate_weather_impact_chart():
     data = pd.read_csv("data/Food_Delivery_Times.csv")
     
-    # Mapeo a español
+    
     traduccion_clima = {
         'Clear': 'Despejado', 'Rainy': 'Lluvia', 'Snowy': 'Nieve', 
         'Foggy': 'Niebla', 'Windy': 'Viento'
@@ -223,7 +297,7 @@ def generate_weather_impact_chart():
 
     plt.tight_layout()
 
-    # --- LO QUE FALTABA ---
+    
     if not os.path.exists("static/plots"):
         os.makedirs("static/plots")
         
@@ -233,7 +307,7 @@ def generate_weather_impact_chart():
     return "Gráfico de clima generado"
     
 def generate_traffic_impact_chart():
-    # 1. Verificación de ruta segura
+
     ruta_csv = "data/Food_Delivery_Times.csv"
     if not os.path.exists(ruta_csv):
         print(f"Error: No se encontró el archivo en {ruta_csv}")
@@ -241,7 +315,7 @@ def generate_traffic_impact_chart():
 
     data = pd.read_csv(ruta_csv)
     
-    # 2. Mapeo a español
+    
     traduccion_trafico = {
         'Low': 'Bajo', 
         'Medium': 'Medio', 
@@ -249,39 +323,39 @@ def generate_traffic_impact_chart():
     }
     data['Tráfico'] = data['Traffic_Level'].map(traduccion_trafico)
     
-    # 3. Agrupar y calcular promedio
+    
     trafico_stats = data.groupby('Tráfico')['Delivery_Time_min'].mean()
     
-    # Ordenar lógicamente de menor a mayor tráfico
+    
     orden = ['Bajo', 'Medio', 'Alto']
     trafico_stats = trafico_stats.reindex(orden)
 
-    # 4. Configuración del gráfico
+    
     plt.figure(figsize=(8, 6))
     ax = plt.gca()
     
-    # Colores: Gris para Bajo/Medio, Naranja Jaguar para el crítico (Alto)
+    
     colores = ['#bdc3c7', '#bdc3c7', '#FFBD00'] 
     
     trafico_stats.plot(kind='bar', ax=ax, color=colores, width=0.6, edgecolor='white')
     
     plt.title("Impacto del Tráfico en Tiempos de Entrega", fontsize=14, fontweight='bold', pad=20)
     plt.ylabel("Minutos (Promedio)", fontsize=10)
-    plt.xlabel("") # Eje X limpio
+    plt.xlabel("") 
     
-    # 5. Limpieza visual
+    
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     plt.xticks(rotation=0, fontsize=11, fontweight='bold')
     plt.grid(axis='y', linestyle='--', alpha=0.3)
     
-    # Etiquetas de datos sobre las barras
+    
     for container in ax.containers:
         ax.bar_label(container, fmt='%.1f', padding=5, fontweight='bold', fontsize=10)
 
     plt.tight_layout()
 
-    # 6. Guardado seguro
+    
     target_dir = "static/plots"
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
@@ -291,12 +365,9 @@ def generate_traffic_impact_chart():
     print("Gráfico 'impacto_trafico.png' guardado con éxito.")
 
 if __name__ == '__main__':
-    #crea la base de datos y las tablas
     with app.app_context():
         db.create_all()
-    #despues genera los graficos
     generate_simple_pro_chart()
     generate_weather_impact_chart()
     generate_traffic_impact_chart()
-    #enciende el sercidor local
     app.run(debug=True, port=5001)
