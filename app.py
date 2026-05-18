@@ -55,9 +55,9 @@ def analisis():
 def simulacion():
     if request.method == 'POST':
         # 1. Captura de datos
-        riders = int(request.form.get('riders', 10))
-        pedidos = int(request.form.get('pedidos', 100))
-        ticket = float(request.form.get('ticket_promedio', 1000))
+        riders = max(0,int(request.form.get('riders', 10)))
+        pedidos = max(0,int(request.form.get('pedidos', 100)))
+        ticket = max(0.0,float(request.form.get('ticket_promedio', 1000)))
         factor = request.form.get('factor_critico', 'High_Traffic')
 
         # 2. Límites de capacidad física por repartidor al día
@@ -367,6 +367,27 @@ def generate_traffic_impact_chart():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
+            # ALTERNATIVA 2: RED DE SEGURIDAD AUTOMÁTICA (SI ESTÁ VACÍA AL ARRANCAR)
+        if Contacto.query.count() == 0:
+            nombres = ["Carlos", "Martina", "Lucas", "Sofia", "Juan", "Valentina", "Mateo", "Camila", "Diego", "Elena"]
+            apellidos = ["Gomez", "Rodriguez", "Fernandez", "Lopez", "Diaz", "Perez", "Romero", "Alvarez", "Torres", "Ruiz"]
+            sectores = ["Gastronomía", "Retail / E-commerce", "Otros"]
+            dominios = ["gmail.com", "outlook.com", "empresa.com", "delivery.co"]
+
+            for _ in range(40):
+                nom = random.choice(nombres)
+                ape = random.choice(apellidos)
+                nombre_completo = f"{nom} {ape}"
+                email = f"{nom.lower()}.{ape.lower()}@{random.choice(dominios)}"
+                sector = random.choice(sectores)
+
+                nuevo_lead = Contacto(nombre=nombre_completo, email=email, sector=sector)
+                db.session.add(nuevo_lead)
+                
+            db.session.commit()
+            print(">> [Seguridad] Base de datos vacía detectada: Se autogeneraron las 40 filas iniciales <<")
+
     generate_simple_pro_chart()
     generate_weather_impact_chart()
     generate_traffic_impact_chart()
