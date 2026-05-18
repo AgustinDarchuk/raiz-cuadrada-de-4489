@@ -1,12 +1,88 @@
-{% extends "index.html"%}
+{% extends "index.html" %}
 
-{% block head%}
+{% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/simulacion.css') }}">
-
 {% endblock %}
 
-{% block body%}
+{% block body %}
+<div class="dashboard-wrapper">
+    
+    <div class="page-header">
+        <h2>Simulador de Impacto Financiero</h2>
+        <p>Proyectá el retorno de inversión al optimizar tu logística con la infraestructura de Jaguar.</p>
+    </div>
 
+    <div class="simulador-grid">
+        
+        <div class="simulador-card form-side">
+            <h3>Configuración Operativa</h3>
+            <form action="/simulacion" method="POST" class="form-simulador">
+                <div class="input-group">
+                    <label for="riders">Riders Activos</label>
+                    <input type="number" id="riders" name="riders" placeholder="Ej: 25" value="{{ riders if resultado else '' }}" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="pedidos">Pedidos Diarios</label>
+                    <input type="number" id="pedidos" name="pedidos" placeholder="Ej: 150" value="{{ pedidos if resultado else '' }}" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="ticket_promedio">Costo de Envío Promedio ($)</label>
+                    <input type="number" id="ticket_promedio" name="ticket_promedio" placeholder="Ej: 1200" value="{{ ticket if resultado else '' }}" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="factor_critico">Principal Cuello de Botella</label>
+                    <select id="factor_critico" name="factor_critico">
+                        <option value="High_Traffic" {% if factor == 'High_Traffic' %}selected{% endif %}>Tráfico Urbano Alto</option>
+                        <option value="Bad_Weather" {% if factor == 'Bad_Weather' %}selected{% endif %}>Clima Inestable (Lluvia/Nieve)</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-jaguar">Optimizar con Jaguar</button>
+            </form>
+        </div>
 
+        <div class="simulador-card results-side">
+            {% if resultado %}
+                <h3>Métricas de Optimización</h3>
+                <div class="metrics-container">
+                    <div class="metric-box box-green">
+                        <span>Eficiencia Recuperada</span>
+                        <h4>+{{ eficiencia }}%</h4>
+                    </div>
+                    <div class="metric-box box-gold">
+                        <span>Ingreso Mensual Recuperado</span>
+                        <h4>{{ extra_mensual }}</h4>
+                    </div>
+                </div>
 
+                <div class="chart-container">
+                    <img src="{{ url_for('static', filename='plots/prediccion_ingresos.png') }}?v={{ range(1, 9999) | random }}" alt="Predicción">
+                </div>
+
+                {% if escasez %}
+                    <div class="insight-box alert-danger" style="background-color: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; padding: 15px; border-radius: 0 6px 6px 0; font-size: 0.9rem; line-height: 1.5; margin-bottom: 15px;">
+                        ⚠️ <strong>¡Alerta de Colapso por Escasez!</strong> Tu flota actual de <strong>{{ riders }} riders</strong> no da abasto para procesar los {{ pedidos }} pedidos diarios. Estás acumulando y perdiendo un estimado de <strong>{{ perdidos }} pedidos por día</strong> porque tus repartidores quedan atrapados en el cuello de botella urbano.
+                    </div>
+                    <div class="insight-box" style="background-color: #f0fdf4; border-left: 4px solid #16a34a; color: #14532d; padding: 15px; border-radius: 0 6px 6px 0; font-size: 0.9rem; line-height: 1.5;">
+                        💡 <strong>Solución Jaguar:</strong> No necesitás salir a contratar más personal de urgencia. Al optimizar los recorridos con Jaguar Home, incrementás la capacidad de tus mismos {{ riders }} riders, permitiéndoles absorber la demanda oculta y transformando esas cancelaciones en ingresos reales.
+                    </div>
+                {% else %}
+                    <div class="insight-box" style="background-color: #f5f6fa; border-left: 4px solid #2c3e50; padding: 15px; border-radius: 0 6px 6px 0; font-size: 0.9rem; color: #2f3542; line-height: 1.5;">
+                        ✅ <strong>Capacidad Estable:</strong> Tu cantidad de riders es suficiente para la demanda actual. La optimización de Jaguar Home en este escenario se enfocará en reducir los costos de combustible, asegurar entregas ultra-rápidas y garantizar la retención de tus clientes.
+                    </div>
+                {% endif %}
+
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <p>Ingresá los datos de tu empresa a la izquierda para generar la simulación de ganancias en tiempo real.</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
 {% endblock %}
