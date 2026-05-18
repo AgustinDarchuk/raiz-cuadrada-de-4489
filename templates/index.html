@@ -14,7 +14,6 @@
 
 <body>
 
-<!-- Se agrega 'fixed-top' para que el video suba y 'navbar-transparente' para el estilo -->
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-transparente px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
         <img src="{{ url_for('static', filename='assets/logosimp.png') }}" height="70" class="ms-2">
@@ -36,13 +35,10 @@
 
 {% block body %}
 
-<!-- HERO: Ahora el video ocupa el 100% desde el borde superior -->
 <section class="hero text-center text-white">
-    <!-- Video de fondo -->
     <video class="hero-video" autoplay muted loop playsinline>
         <source src="{{ url_for('static', filename='plots/jaguarvideo.mp4') }}" type="video/mp4">
     </video>
-    <!-- Overlay oscuro para legibilidad -->
     <div class="hero-overlay"></div>
  
     <div class="container py-5 hero-content">
@@ -56,19 +52,41 @@
 
 <section class="about py-5">
     <div class="container">
-        <h2 class="text-center mb-4">Sobre Nosotros</h2>
+        <h2 class="text-center mb-5">Sobre Nosotros</h2>
 
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <p>
-                    Jaguar brinda a las empresas especializadas en delivery un analisis completo de su rendimiento, procesos y eficiencia, para generar un mayor rendimiento como empresa.
-                </p>
-
-                <p>
-                    Ademas brindamos nuesta propia app, para gestionar a los riders y sus ingresos, manteniendo a los repartidores, los restaurantes, y los usuarios, en una misma aplicacion para la recoleccion eficiente de los datos.
-                </p>
+        <div class="row g-4 mb-5 text-center">
+            <div class="col-md-4">
+                <div class="info-card p-4 h-100">
+                    <div class="info-icon mb-3">📊</div>
+                    <h3 class="h5 fw-bold mb-3">Análisis de Rendimiento</h3>
+                    <p>
+                        Jaguar brinda a las empresas especializadas en delivery un analisis completo de su rendimiento, procesos y eficiencia, para generar un mayor rendimiento como empresa.
+                    </p>
+                </div>
             </div>
 
+            <div class="col-md-4">
+                <div class="info-card p-4 h-100">
+                    <div class="info-icon mb-3">📱</div>
+                    <h3 class="h5 fw-bold mb-3">Gestión de Aplicación</h3>
+                    <p>
+                        Ademas brindamos nuesta propia app, para gestionar a los riders y sus ingresos, manteniendo a los repartidores, los restaurantes, y los usuarios, en una misma aplicacion.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="info-card p-4 h-100">
+                    <div class="info-icon mb-3">📈</div>
+                    <h3 class="h5 fw-bold mb-3">Eficiencia de Datos</h3>
+                    <p>
+                        Centralizamos a todos los participantes en una misma aplicación para facilitar la recolección de datos y mejorar la eficiencia del flujo de trabajo.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
             <div class="col-md-6 text-center">
                 <img src="{{ url_for('static', filename='plots/jhonfoto.png') }}"
                 class="img-fluid border border-3 foto-perfil"
