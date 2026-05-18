@@ -107,6 +107,34 @@ body {
     line-height: 1.6;
 }
 
+/* Nuevos estilos para las tres secciones de información */
+.info-card {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.info-icon {
+    font-size: 2rem;
+}
+
+.info-card h3 {
+    color: var(--negro);
+}
+
+.info-card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+    color: #555555;
+}
+
 /* IMAGEN PERSONALIZADA */
 .about img.foto-perfil {
     max-height: 300px;
@@ -114,6 +142,7 @@ body {
     border-color: var(--negro) !important; /* Cambia el marco a negro */
     border-radius: 25px; /* Redondea las esquinas */
 }
+
 /* FOOTER */
 footer {
     background-color: var(--negro);
